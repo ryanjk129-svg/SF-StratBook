@@ -307,20 +307,28 @@ function setStatus(msg,type) {
   el.innerHTML=`<div class="sync-dot${type==='loading'?' pulse':''}"></div>${msg}`;
 }
 
-// Fetch the worksheet feed to get real tab gids keyed by name
+// Fetch the public spreadsheet HTML and extract tab name → gid mappings
 async function getTabGids() {
-  const feedUrl = `https://spreadsheets.google.com/feeds/worksheets/${SHEET_ID}/public/basic?alt=json`;
-  const res = await fetch(feedUrl);
-  if (!res.ok) throw new Error(`Feed HTTP ${res.status}`);
-  const json = await res.json();
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/pubhtml`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const html = await res.text();
   const tabs = {};
-  for (const entry of json.feed.entry) {
-    const title = entry.title.$t.trim().toUpperCase();
-    // gid is the last part of the self link id
-    const id = entry.id.$t;
-    const gid = id.split('/').pop();
-    tabs[title] = gid;
+  // pubhtml contains <li id="sheet-button-GID" ...>NAME</li>
+  const re = /<li\s+id="sheet-button-(\d+)"[^>]*>\s*<a[^>]*>([^<]+)<\/a>/gi;
+  let m;
+  while ((m = re.exec(html)) !== null) {
+    tabs[m[2].trim().toUpperCase()] = m[1];
   }
+  // fallback: look for ol.switcherContainer links
+  if (!Object.keys(tabs).length) {
+    const re2 = /href="#gid=(\d+)"[^>]*>([^<]+)</gi;
+    while ((m = re2.exec(html)) !== null) {
+      tabs[m[2].trim().toUpperCase()] = m[1];
+    }
+  }
+  console.log('Tabs found:', tabs);
+  if (!Object.keys(tabs).length) throw new Error('Could not parse tab gids from pubhtml');
   return tabs;
 }
 
