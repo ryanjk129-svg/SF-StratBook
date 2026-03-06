@@ -301,44 +301,74 @@ function parseSheetData(rows) {
 // ═══════════════════════════════════════════
 const SHEET_ID = '1g1QRAYNBtLECvyrpfsFvW3PGpLnjfnsuwnga6IIEJcw';
 
-function sheetURL(name) {
-  return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&sheet=${encodeURIComponent(name)}`;
-}
 function setStatus(msg,type) {
   const el=document.getElementById('syncStatus');
   el.className=`sync-status ${type}`;
   el.innerHTML=`<div class="sync-dot${type==='loading'?' pulse':''}"></div>${msg}`;
 }
+
+// Fetch the worksheet feed to get real tab gids keyed by name
+async function getTabGids() {
+  const feedUrl = `https://spreadsheets.google.com/feeds/worksheets/${SHEET_ID}/public/basic?alt=json`;
+  const res = await fetch(feedUrl);
+  if (!res.ok) throw new Error(`Feed HTTP ${res.status}`);
+  const json = await res.json();
+  const tabs = {};
+  for (const entry of json.feed.entry) {
+    const title = entry.title.$t.trim().toUpperCase();
+    // gid is the last part of the self link id
+    const id = entry.id.$t;
+    const gid = id.split('/').pop();
+    tabs[title] = gid;
+  }
+  return tabs;
+}
+
 async function loadSheet() {
   setStatus('Loading from Google Sheets…','loading');
-  const newMaps=JSON.parse(JSON.stringify(FALLBACK));
-  const errors=[];
-  await Promise.all(MAP_ORDER.map(async mapKey=>{
+  const newMaps = JSON.parse(JSON.stringify(FALLBACK));
+  const errors  = [];
+
+  let tabGids;
+  try {
+    tabGids = await getTabGids();
+    console.log('Tab gids found:', tabGids);
+  } catch(e) {
+    setStatus(`Failed to read sheet tabs — check publish settings (${e.message})`,'err');
+    return;
+  }
+
+  await Promise.all(MAP_ORDER.map(async mapKey => {
+    const gid = tabGids[mapKey];
+    if (!gid) {
+      errors.push(`${mapKey}: tab not found in sheet`);
+      return;
+    }
     try {
-      const url = sheetURL(mapKey);
-      console.log(`Fetching ${mapKey}:`, url);
-      const res=await fetch(url);
-      console.log(`${mapKey} response:`, res.status, res.headers.get('content-type'));
-      if(!res.ok) throw new Error(`HTTP ${res.status}`);
-      const text=await res.text();
-      console.log(`${mapKey} first 200 chars:`, text.slice(0,200));
-      if(text.includes('<html')||text.includes('google-visualization-errors')||text.includes('<!DOCTYPE'))
-        throw new Error('Got HTML instead of CSV — sheet may not be published');
-      newMaps[mapKey]=parseSheetData(parseCSV(text));
+      const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${gid}`;
+      console.log(`Fetching ${mapKey} (gid=${gid})`);
+      const res  = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const text = await res.text();
+      if (text.includes('<html') || text.includes('<!DOCTYPE'))
+        throw new Error('Got HTML instead of CSV');
+      newMaps[mapKey] = parseSheetData(parseCSV(text));
     } catch(e) {
       console.error(`${mapKey} failed:`, e);
       errors.push(`${mapKey}: ${e.message}`);
     }
   }));
-  MAPS=newMaps;
-  currentMap='ANCIENT'; currentSide='T';
+
+  MAPS = newMaps;
+  currentMap = 'ANCIENT'; currentSide = 'T';
   render();
-  if (errors.length===0) {
+
+  if (errors.length === 0) {
     setStatus('Live — synced from Google Sheets','ok');
-  } else if (errors.length<MAP_ORDER.length) {
-    setStatus(`Partial sync (${MAP_ORDER.length-errors.length}/${MAP_ORDER.length} maps loaded)`,'ok');
+  } else if (errors.length < MAP_ORDER.length) {
+    setStatus(`Partial sync (${MAP_ORDER.length - errors.length}/${MAP_ORDER.length} maps loaded)`,'ok');
   } else {
-    setStatus(`Failed — open browser console (F12) for details`,'err');
+    setStatus('Failed to load — check sheet publish settings','err');
   }
 }
 
