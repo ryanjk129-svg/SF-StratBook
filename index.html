@@ -263,11 +263,11 @@ function parseSheetData(rows) {
   let nextIsLevel=false;
   for (const row of rows) {
     if (nextIsLevel) {
-      const v=parseFloat(row[0]);
+      const v=parseFloat(row[9]);
       if ([1,2,3].includes(v)) result.complexity=v;
       nextIsLevel=false;
     }
-    if ((row[0]||'').toLowerCase().includes('what level')) nextIsLevel=true;
+    if ((row[9]||'').toLowerCase().includes('what level')) nextIsLevel = true;
   }
 
   // Strats: col[0]=tactic, col[1]=side, col[2]=setup, col[3]=player, col[4]=resp, col[14]=notes
