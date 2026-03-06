@@ -8,39 +8,65 @@
   @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow+Condensed:wght@400;500;600;700&display=swap');
 
   :root {
-    --bg:       #0d0f14;
-    --panel:    #131620;
-    --card:     #1a1e2e;
-    --card-alt: #141826;
-    --border:   #252a40;
-    --t:        #e84560;
-    --ct:       #2b8fef;
-    --gold:     #f0a500;
-    --green:    #27c97a;
-    --text:     #c8d0e0;
-    --muted:    #5a6380;
-    --white:    #f0f4ff;
+    --bg:#0d0f14; --panel:#131620; --card:#1a1e2e; --card-alt:#141826;
+    --border:#252a40; --t:#e84560; --ct:#2b8fef; --gold:#f0a500;
+    --green:#27c97a; --text:#c8d0e0; --muted:#5a6380; --white:#f0f4ff;
   }
   * { margin:0; padding:0; box-sizing:border-box; }
   body { background:var(--bg); color:var(--text); font-family:'Barlow Condensed',sans-serif; min-height:100vh; overflow-x:hidden; }
 
+  /* ── SYNC BAR ── */
+  .sync-bar {
+    background:var(--panel); border-bottom:1px solid var(--border);
+    padding:0 28px; display:flex; align-items:center; gap:12px; min-height:44px; flex-wrap:wrap;
+  }
+  .sync-icon { font-size:14px; opacity:.6; }
+  .sync-label { font-size:11px; letter-spacing:2px; color:var(--muted); text-transform:uppercase; white-space:nowrap; }
+  .sync-input {
+    flex:1; max-width:400px; background:var(--card); border:1px solid var(--border);
+    color:var(--white); padding:5px 10px; font-family:'Share Tech Mono',monospace;
+    font-size:12px; outline:none; border-radius:2px; transition:border-color .2s;
+  }
+  .sync-input::placeholder { color:var(--muted); }
+  .sync-input:focus { border-color:var(--gold); }
+  .sync-btn {
+    padding:5px 16px; background:rgba(240,165,0,.1); border:1px solid var(--gold);
+    color:var(--gold); font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:700;
+    letter-spacing:2px; text-transform:uppercase; cursor:pointer; border-radius:2px;
+    transition:all .2s; white-space:nowrap;
+  }
+  .sync-btn:hover { background:rgba(240,165,0,.2); }
+  .sync-btn:disabled { opacity:.4; cursor:not-allowed; }
+  .sync-status { font-family:'Share Tech Mono',monospace; font-size:11px; white-space:nowrap; display:flex; align-items:center; gap:6px; }
+  .sync-status.ok      { color:var(--green); }
+  .sync-status.err     { color:var(--t); }
+  .sync-status.loading { color:var(--gold); }
+  .sync-dot { width:6px; height:6px; border-radius:50%; background:currentColor; flex-shrink:0; }
+  .sync-dot.pulse { animation:pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.2} }
+  .sync-help { font-size:11px; color:var(--muted); cursor:pointer; text-decoration:underline; margin-left:auto; white-space:nowrap; }
+  .sync-help:hover { color:var(--text); }
+
+  /* ── HELP MODAL ── */
+  .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.75); z-index:100; align-items:center; justify-content:center; padding:20px; }
+  .modal-overlay.show { display:flex; }
+  .modal { background:var(--panel); border:1px solid var(--border); max-width:520px; width:100%; border-left:3px solid var(--gold); }
+  .modal-header { padding:16px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+  .modal-header h3 { font-family:'Rajdhani',sans-serif; font-size:16px; letter-spacing:2px; color:var(--gold); text-transform:uppercase; }
+  .modal-close { background:none; border:none; color:var(--muted); font-size:20px; cursor:pointer; line-height:1; padding:0 4px; }
+  .modal-close:hover { color:var(--white); }
+  .modal-body { padding:20px; display:flex; flex-direction:column; gap:16px; }
+  .step { display:flex; gap:12px; align-items:flex-start; }
+  .step-num { width:22px; height:22px; border-radius:2px; background:rgba(240,165,0,.15); border:1px solid var(--gold); color:var(--gold); font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
+  .step-text { font-size:13px; color:var(--text); line-height:1.6; }
+  .step-text strong { color:var(--white); }
+  .step-text code { font-family:'Share Tech Mono',monospace; font-size:11px; background:var(--card); border:1px solid var(--border); padding:1px 5px; border-radius:2px; color:var(--gold); }
+
   /* ── HEADER ── */
-  header {
-    position:relative; background:var(--panel); border-bottom:1px solid var(--border);
-    padding:0 28px; display:flex; align-items:center; justify-content:space-between; gap:20px; overflow:hidden;
-  }
-  header::before {
-    content:''; position:absolute; inset:0;
-    background:linear-gradient(90deg,rgba(232,69,96,.07) 0%,transparent 40%,rgba(43,143,239,.07) 100%);
-    pointer-events:none;
-  }
+  header { position:relative; background:var(--panel); border-bottom:1px solid var(--border); padding:0 28px; display:flex; align-items:center; justify-content:space-between; gap:20px; overflow:hidden; }
+  header::before { content:''; position:absolute; inset:0; background:linear-gradient(90deg,rgba(232,69,96,.07) 0%,transparent 40%,rgba(43,143,239,.07) 100%); pointer-events:none; }
   .logo { display:flex; align-items:center; gap:14px; padding:14px 0; }
-  .logo-icon {
-    width:44px; height:44px;
-    background:conic-gradient(from 135deg,var(--t),var(--ct));
-    clip-path:polygon(50% 0%,100% 38%,82% 100%,18% 100%,0% 38%);
-    display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;
-  }
+  .logo-icon { width:44px; height:44px; background:conic-gradient(from 135deg,var(--t),var(--ct)); clip-path:polygon(50% 0%,100% 38%,82% 100%,18% 100%,0% 38%); display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }
   .logo-text h1 { font-family:'Rajdhani',sans-serif; font-size:20px; font-weight:700; letter-spacing:3px; color:var(--gold); text-transform:uppercase; }
   .logo-text p  { font-size:11px; letter-spacing:4px; color:var(--muted); text-transform:uppercase; }
   .complexity { display:flex; flex-direction:column; align-items:flex-end; gap:4px; }
@@ -50,81 +76,38 @@
   .pip.on { background:var(--gold); }
 
   /* ── MAP TABS ── */
-  .map-tabs-bar {
-    background:var(--panel); border-bottom:2px solid var(--border);
-    display:flex; align-items:flex-end; gap:0; overflow-x:auto;
-    padding:0 28px; scrollbar-width:none;
-  }
+  .map-tabs-bar { background:var(--panel); border-bottom:2px solid var(--border); display:flex; align-items:flex-end; overflow-x:auto; padding:0 28px; scrollbar-width:none; }
   .map-tabs-bar::-webkit-scrollbar { display:none; }
-  .map-tab {
-    position:relative; padding:12px 20px 10px;
-    font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:700;
-    letter-spacing:2px; text-transform:uppercase; color:var(--muted);
-    cursor:pointer; border:none; background:none; white-space:nowrap;
-    border-bottom:2px solid transparent; margin-bottom:-2px;
-    transition:color .2s, border-color .2s;
-  }
+  .map-tab { position:relative; padding:12px 20px 10px; font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--muted); cursor:pointer; border:none; background:none; white-space:nowrap; border-bottom:2px solid transparent; margin-bottom:-2px; transition:color .2s,border-color .2s; }
   .map-tab:hover { color:var(--white); }
   .map-tab.active { color:var(--gold); border-bottom-color:var(--gold); }
-  .map-tab .strat-count {
-    display:inline-block; font-size:10px; padding:1px 5px; border-radius:2px;
-    background:rgba(240,165,0,.15); color:var(--gold); margin-left:6px;
-    font-family:'Share Tech Mono',monospace; font-weight:400; letter-spacing:0;
-  }
+  .map-tab .strat-count { display:inline-block; font-size:10px; padding:1px 5px; border-radius:2px; background:rgba(240,165,0,.15); color:var(--gold); margin-left:6px; font-family:'Share Tech Mono',monospace; font-weight:400; letter-spacing:0; }
   .map-tab .strat-count.zero { background:rgba(90,99,128,.15); color:var(--muted); }
 
-  /* ── SIDE CONTROLS ── */
-  .controls {
-    display:flex; align-items:center; gap:12px; padding:14px 28px;
-    background:var(--panel); border-bottom:1px solid var(--border); flex-wrap:wrap;
-  }
+  /* ── CONTROLS ── */
+  .controls { display:flex; align-items:center; gap:12px; padding:14px 28px; background:var(--panel); border-bottom:1px solid var(--border); flex-wrap:wrap; }
   .side-tabs { display:flex; gap:4px; }
-  .tab-btn {
-    padding:7px 20px; background:var(--card); border:1px solid var(--border);
-    color:var(--muted); font-family:'Rajdhani',sans-serif; font-size:14px;
-    font-weight:600; letter-spacing:2px; text-transform:uppercase; cursor:pointer;
-    transition:all .2s; clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);
-  }
+  .tab-btn { padding:7px 20px; background:var(--card); border:1px solid var(--border); color:var(--muted); font-family:'Rajdhani',sans-serif; font-size:14px; font-weight:600; letter-spacing:2px; text-transform:uppercase; cursor:pointer; transition:all .2s; clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%); }
   .tab-btn:hover { color:var(--white); border-color:var(--muted); }
   .tab-btn.active-t  { background:rgba(232,69,96,.15); border-color:var(--t); color:var(--t); }
   .tab-btn.active-ct { background:rgba(43,143,239,.15); border-color:var(--ct); color:var(--ct); }
   .divider { width:1px; height:30px; background:var(--border); }
   .filter-label { font-size:11px; letter-spacing:2px; color:var(--muted); text-transform:uppercase; }
-  .player-filters { display:flex; gap:5px; flex-wrap:wrap; }
-  .player-btn {
-    padding:4px 12px; background:var(--card); border:1px solid var(--border);
-    color:var(--muted); font-size:12px; letter-spacing:1px; cursor:pointer; border-radius:2px; transition:all .2s;
-  }
-  .player-btn:hover { color:var(--white); }
-  .player-btn.active { background:rgba(240,165,0,.12); border-color:var(--gold); color:var(--gold); }
-  .search-box {
-    margin-left:auto; background:var(--card); border:1px solid var(--border);
-    color:var(--white); padding:6px 12px; font-family:'Share Tech Mono',monospace;
-    font-size:12px; outline:none; width:200px; border-radius:2px; transition:border-color .2s;
-  }
+  .player-filters,.buy-filters { display:flex; gap:5px; flex-wrap:wrap; }
+  .player-btn,.buy-btn { padding:4px 12px; background:var(--card); border:1px solid var(--border); color:var(--muted); font-size:12px; letter-spacing:1px; cursor:pointer; border-radius:2px; transition:all .2s; }
+  .player-btn:hover,.buy-btn:hover { color:var(--white); }
+  .player-btn.active     { background:rgba(240,165,0,.12); border-color:var(--gold); color:var(--gold); }
+  .buy-btn.active-pistol { background:rgba(240,165,0,.12); border-color:var(--gold); color:var(--gold); }
+  .buy-btn.active-full   { background:rgba(39,201,122,.12); border-color:var(--green); color:var(--green); }
+  .buy-btn.active-force,.buy-btn.active-eco { background:rgba(232,69,96,.12); border-color:var(--t); color:var(--t); }
+  .buy-btn.active-other  { background:rgba(43,143,239,.12); border-color:var(--ct); color:var(--ct); }
+  .search-box { margin-left:auto; background:var(--card); border:1px solid var(--border); color:var(--white); padding:6px 12px; font-family:'Share Tech Mono',monospace; font-size:12px; outline:none; width:200px; border-radius:2px; transition:border-color .2s; }
   .search-box::placeholder { color:var(--muted); }
   .search-box:focus { border-color:var(--gold); }
-  .buy-filters { display:flex; gap:5px; flex-wrap:wrap; }
-  .buy-btn {
-    padding:4px 12px; background:var(--card); border:1px solid var(--border);
-    color:var(--muted); font-size:12px; letter-spacing:1px; cursor:pointer; border-radius:2px; transition:all .2s;
-  }
-  .buy-btn:hover { color:var(--white); }
-  .buy-btn.active-pistol  { background:rgba(240,165,0,.12);  border-color:var(--gold);  color:var(--gold); }
-  .buy-btn.active-full    { background:rgba(39,201,122,.12); border-color:var(--green); color:var(--green); }
-  .buy-btn.active-force   { background:rgba(232,69,96,.12);  border-color:var(--t);     color:var(--t); }
-  .buy-btn.active-eco     { background:rgba(232,69,96,.12);  border-color:var(--t);     color:var(--t); }
-  .buy-btn.active-other   { background:rgba(43,143,239,.12); border-color:var(--ct);    color:var(--ct); }
 
   /* ── POSITIONS BAR ── */
-  .positions-bar {
-    display:flex; gap:6px; flex-wrap:wrap; padding:10px 28px;
-    background:var(--panel); border-bottom:1px solid var(--border);
-  }
-  .pos-chip {
-    display:flex; align-items:center; gap:7px; background:var(--card);
-    border:1px solid var(--border); padding:4px 10px; border-radius:2px; font-size:12px;
-  }
+  .positions-bar { display:flex; gap:6px; flex-wrap:wrap; padding:10px 28px; background:var(--panel); border-bottom:1px solid var(--border); }
+  .pos-chip { display:flex; align-items:center; gap:7px; background:var(--card); border:1px solid var(--border); padding:4px 10px; border-radius:2px; font-size:12px; }
   .pos-chip .pname { font-family:'Rajdhani',sans-serif; font-weight:700; color:var(--white); letter-spacing:1px; }
   .pos-chip .ppos  { color:var(--muted); }
   .pos-chip.t-pos  .ppos { color:var(--t); }
@@ -134,75 +117,87 @@
   main { padding:20px 28px; display:flex; flex-direction:column; gap:7px; }
 
   /* ── STRAT CARD ── */
-  .strat-card {
-    background:var(--card); border:1px solid var(--border); border-left:3px solid transparent;
-    transition:border-color .2s, transform .15s; cursor:pointer; animation:fadeIn .25s ease;
-  }
+  .strat-card { background:var(--card); border:1px solid var(--border); border-left:3px solid transparent; transition:border-color .2s,transform .15s; cursor:pointer; animation:fadeIn .25s ease; }
   @keyframes fadeIn { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:none} }
   .strat-card:hover { transform:translateX(2px); }
   .strat-card.t-card  { border-left-color:var(--t); }
   .strat-card.ct-card { border-left-color:var(--ct); }
   .strat-card.hidden  { display:none !important; }
-
-  .card-header {
-    display:flex; align-items:center; gap:14px; padding:11px 15px;
-    border-bottom:1px solid transparent; transition:border-color .2s; user-select:none;
-  }
+  .card-header { display:flex; align-items:center; gap:14px; padding:11px 15px; border-bottom:1px solid transparent; transition:border-color .2s; user-select:none; }
   .strat-card.open .card-header { border-bottom-color:var(--border); }
   .card-name { font-family:'Rajdhani',sans-serif; font-size:17px; font-weight:700; letter-spacing:2px; color:var(--white); text-transform:uppercase; flex:1; }
-  .card-setup {
-    font-size:11px; letter-spacing:2px; color:var(--muted); text-transform:uppercase;
-    background:var(--card-alt); border:1px solid var(--border); padding:3px 9px; border-radius:2px;
-  }
-  .card-setup.pistol  { border-color:rgba(240,165,0,.4);  color:var(--gold); }
-  .card-setup.eco     { border-color:rgba(232,69,96,.4);  color:var(--t); }
-  .card-setup.full    { border-color:rgba(39,201,122,.4); color:var(--green); }
+  .card-setup { font-size:11px; letter-spacing:2px; color:var(--muted); text-transform:uppercase; background:var(--card-alt); border:1px solid var(--border); padding:3px 9px; border-radius:2px; }
+  .card-setup.pistol { border-color:rgba(240,165,0,.4);  color:var(--gold); }
+  .card-setup.eco    { border-color:rgba(232,69,96,.4);  color:var(--t); }
+  .card-setup.full   { border-color:rgba(39,201,122,.4); color:var(--green); }
   .chevron { color:var(--muted); font-size:17px; transition:transform .25s; line-height:1; }
   .strat-card.open .chevron { transform:rotate(180deg); }
   .card-notes { padding:7px 15px; font-size:12px; color:var(--muted); font-style:italic; border-bottom:1px solid var(--border); display:none; }
   .strat-card.open .card-notes { display:block; }
   .player-table { display:none; }
   .strat-card.open .player-table { display:block; }
-  .player-row {
-    display:grid; grid-template-columns:130px 1fr;
-    border-bottom:1px solid var(--border); transition:background .15s;
-  }
+  .player-row { display:grid; grid-template-columns:130px 1fr; border-bottom:1px solid var(--border); transition:background .15s; }
   .player-row:last-child { border-bottom:none; }
   .player-row:hover { background:rgba(255,255,255,.02); }
   .player-row.highlight { background:rgba(240,165,0,.06); }
   .player-row.highlight .player-name { color:var(--gold); }
-  .player-name {
-    padding:9px 14px; font-family:'Rajdhani',sans-serif; font-size:14px; font-weight:700;
-    letter-spacing:1px; color:var(--white); text-transform:uppercase; border-right:1px solid var(--border);
-    display:flex; align-items:center;
-  }
+  .player-name { padding:9px 14px; font-family:'Rajdhani',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--white); text-transform:uppercase; border-right:1px solid var(--border); display:flex; align-items:center; }
   .player-resp { padding:9px 14px; font-size:13px; color:var(--text); display:flex; align-items:center; line-height:1.5; gap:8px; }
-  .resp-tag {
-    display:inline-block; font-family:'Share Tech Mono',monospace; font-size:10px;
-    padding:1px 6px; border-radius:1px; flex-shrink:0;
-    background:rgba(43,143,239,.15); color:var(--ct); border:1px solid rgba(43,143,239,.3);
-  }
+  .resp-tag { display:inline-block; font-family:'Share Tech Mono',monospace; font-size:10px; padding:1px 6px; border-radius:1px; flex-shrink:0; background:rgba(43,143,239,.15); color:var(--ct); border:1px solid rgba(43,143,239,.3); }
   .resp-tag.t-tag { background:rgba(232,69,96,.15); color:var(--t); border-color:rgba(232,69,96,.3); }
 
-  /* ── EMPTY / COMING SOON ── */
+  /* ── STATES ── */
   .empty-state { text-align:center; padding:50px 28px; color:var(--muted); font-size:15px; letter-spacing:2px; text-transform:uppercase; display:none; }
-  .coming-soon {
-    text-align:center; padding:60px 28px;
-    display:none; flex-direction:column; align-items:center; gap:14px;
-  }
+  .coming-soon { text-align:center; padding:60px 28px; display:none; flex-direction:column; align-items:center; gap:14px; }
   .coming-soon.show { display:flex; }
   .coming-soon-icon { font-size:42px; opacity:.25; }
   .coming-soon h3 { font-family:'Rajdhani',sans-serif; font-size:20px; letter-spacing:4px; color:var(--muted); text-transform:uppercase; }
   .coming-soon p { font-size:13px; color:var(--muted); letter-spacing:1px; max-width:400px; }
 
-  footer {
-    text-align:center; padding:18px; color:var(--muted); font-size:10px; letter-spacing:2px;
-    text-transform:uppercase; border-top:1px solid var(--border); margin-top:20px;
-  }
+  footer { text-align:center; padding:18px; color:var(--muted); font-size:10px; letter-spacing:2px; text-transform:uppercase; border-top:1px solid var(--border); margin-top:20px; }
   footer span { color:var(--gold); }
 </style>
 </head>
 <body>
+
+<!-- SYNC BAR -->
+<div class="sync-bar">
+  <span class="sync-icon">🔗</span>
+  <span class="sync-label">Sheet ID:</span>
+  <input class="sync-input" id="sheetIdInput" placeholder="Paste your Google Sheet ID (or full URL)…" autocomplete="off" spellcheck="false"
+    onkeydown="if(event.key==='Enter')connectSheet()">
+  <button class="sync-btn" id="syncBtn" onclick="connectSheet()">Connect</button>
+  <div class="sync-status" id="syncStatus"></div>
+  <span class="sync-help" onclick="document.getElementById('helpModal').classList.add('show')">How do I get my Sheet ID? ↗</span>
+</div>
+
+<!-- HELP MODAL -->
+<div class="modal-overlay" id="helpModal" onclick="if(event.target===this)this.classList.remove('show')">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Connecting Your Google Sheet</h3>
+      <button class="modal-close" onclick="document.getElementById('helpModal').classList.remove('show')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text">In Google Sheets, go to <strong>File → Share → Publish to web</strong></div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text">Select <strong>Entire Document</strong> and format <strong>Web page</strong>, then click <strong>Publish</strong>. The sheet stays in your Drive — this just makes the data readable by the app.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">Copy your Sheet ID from the browser address bar — it's the long string between <code>/d/</code> and <code>/edit</code>. You can also just paste the full URL and the app will extract it.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-text">Paste it above and hit <strong>Connect</strong>. The app fetches all 9 maps live. Just <strong>refresh the page</strong> anytime to pull the latest changes from the sheet — no re-entering the ID needed.</div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <header>
   <div class="logo">
@@ -213,21 +208,17 @@
     </div>
   </div>
   <div class="complexity">
-    <span class="complexity-label" id="complexLabel">Map Complexity</span>
+    <span class="complexity-label">Map Complexity</span>
     <div class="pips" id="complexPips">
       <div class="pip"></div><div class="pip"></div><div class="pip"></div>
     </div>
   </div>
 </header>
 
-<!-- Map Tabs -->
 <div class="map-tabs-bar" id="mapTabsBar"></div>
-
-<!-- Positions -->
 <div class="positions-bar" id="positionsBar"></div>
 
-<!-- Side controls -->
-<div class="controls" id="controls">
+<div class="controls">
   <div class="side-tabs">
     <button class="tab-btn active-t" id="btnT" onclick="setSide('T')">⚡ T-Side</button>
     <button class="tab-btn" id="btnCT" onclick="setSide('CT')">🛡 CT-Side</button>
@@ -253,444 +244,328 @@
 <footer>Made by <span>@mesamiduckCS</span> · Smart Fucks Stratbook · CS2 Map Pool</footer>
 
 <script>
-// ── DATA ────────────────────────────────────────────────────────────────────
-
-const PLAYERS = ["Lucas", "Neo", "Jack", "Aaron", "Oliver/Ryan"];
-
-const MAPS = {
-  ANCIENT: {
-    complexity: 2,
-    positions: {
-      CT: { Lucas:"Middle", Neo:"Middle", Jack:"B Anchor", Aaron:"Cave", "Oliver/Ryan":"A Anchor" },
-      T:  { Lucas:"B Ramp", Neo:"Cave / Lane", Jack:"A Main", Aaron:"Mid", "Oliver/Ryan":"Awper" }
-    },
-    strats: {
-      CT: [
-        { name:"Bot Default", setup:"Pistol", notes:"Classic CT pistol setup — hold positions and play for info.", players:[
-          {name:"Lucas",       resp:"B LONG",    detail:"B Long — hold and relay info"},
-          {name:"Neo",         resp:"DONUT",     detail:"Donut hold"},
-          {name:"Jack",        resp:"DONUT",     detail:"Donut hold"},
-          {name:"Aaron",       resp:"GAY",       detail:"Gay position hold"},
-          {name:"Oliver/Ryan", resp:"B LONG",    detail:"Buy smoke + kit, hold B long"},
-        ]},
-        { name:"Default Hold", setup:"Standard", notes:"Bread and butter setup. Hold positions until T movement is confirmed, then react.", players:[
-          {name:"Lucas",       resp:"MID",       detail:"Passive donut position, watch for T mid aggro and relay info"},
-          {name:"Neo",         resp:"MID",       detail:"Support Lucas, secondary donut angle, ready to rotate"},
-          {name:"Jack",        resp:"B ANCHOR",  detail:"Passive B main hold, watch short, don't over-peek"},
-          {name:"Aaron",       resp:"CAVE",      detail:"Passive cave position, deny T cave take, watch for mid cross"},
-          {name:"Oliver/Ryan", resp:"A ANCHOR",  detail:"Hold A main from temple. Don't peek early, play for info first"},
-        ]},
-        { name:"Mid Control", setup:"Full Buy", notes:"Win mid = information advantage and rotation dominance. Commit early.", players:[
-          {name:"Lucas",       resp:"MID AGGRO", detail:"Aggressive early donut contest — peek out fast, take mid control before T mid arrives"},
-          {name:"Neo",         resp:"ELBOW",     detail:"Take elbow aggressively with Lucas. Smoke off if over-extended, fall back to donut"},
-          {name:"Jack",        resp:"B ANCHOR",  detail:"B passive — hold short and B main. Don't over-commit until mid result is known"},
-          {name:"Aaron",       resp:"CAVE AGGRO",detail:"Aggressive cave peek — deny T cave take early, fall back once T numbers are clear"},
-          {name:"Oliver/Ryan", resp:"A ANCHOR",  detail:"Passive hold, ready to rotate aggressively through mid if Lucas/Neo win control"},
-        ]},
-        { name:"A Aggro Peek", setup:"Full Buy", notes:"Early A peek designed to catch T awper or A main players off-guard in setup phase.", players:[
-          {name:"Lucas",       resp:"MID",       detail:"Mid donut aggressive peek — contest T mid early, relay info"},
-          {name:"Neo",         resp:"A ROTATE",  detail:"Stay mid until Oliver/Ryan result is known, rotate A ready"},
-          {name:"Jack",        resp:"B ANCHOR",  detail:"B passive hold — anchor B, don't rotate early"},
-          {name:"Aaron",       resp:"CAVE",      detail:"Cave passive — watch for B-lane split, hold cave until called"},
-          {name:"Oliver/Ryan", resp:"AGGRO PEEK",detail:"AGGRESSIVE early A main or temple peek — punish T passive setup. Fall back after duel"},
-        ]},
-        { name:"B Aggro Peek", setup:"Full Buy", notes:"Punish T B setups early. Jack and Aaron peek simultaneously to overwhelm the entry.", players:[
-          {name:"Lucas",       resp:"MID",       detail:"Mid hold — watch for mid cross after B aggro, relay info"},
-          {name:"Neo",         resp:"B ROTATE",  detail:"Mid to B rotate ready — collapse B fast if Jack/Aaron win the peek"},
-          {name:"Jack",        resp:"AGGRO PEEK",detail:"AGGRESSIVE early B main peek — catch T B main players in setup. Flash yourself in"},
-          {name:"Aaron",       resp:"CAVE AGGRO",detail:"AGGRESSIVE early cave peek — contest lane take before T gets comfortable"},
-          {name:"Oliver/Ryan", resp:"A ANCHOR",  detail:"A passive hold — don't over-rotate until B result is clear"},
-        ]},
-        { name:"Retake A", setup:"Any", notes:"Mid players go donut, Jack goes CT long, Aaron temple flank. Crossfire on site.", players:[
-          {name:"Lucas",       resp:"MID ENTRY", detail:"Rotate through mid/donut to A — use smokes on site if available"},
-          {name:"Neo",         resp:"MID ENTRY", detail:"Rotate through mid/donut with Lucas — come in from second angle"},
-          {name:"Jack",        resp:"CT LONG",   detail:"Slow rotate from B through CT corridor — come in last, crossfire with mid players"},
-          {name:"Aaron",       resp:"TEMPLE",    detail:"Cave to temple rotate — flank from cave side, flash site"},
-          {name:"Oliver/Ryan", resp:"CT FIGHT",  detail:"Fight from CT/A position — hold remaining angle, don't give ground cheaply"},
-        ]},
-        { name:"Retake B", setup:"Any", notes:"Jack holds for trade, Aaron goes cave, mid players collapse. Coordinate flashes.", players:[
-          {name:"Lucas",       resp:"CAVE",      detail:"Mid to cave route — support through cave into B, come from lane side"},
-          {name:"Neo",         resp:"MID PUSH",  detail:"Rotate through cave or short to create crossfire"},
-          {name:"Jack",        resp:"B FIGHT",   detail:"Fight from B anchor position — don't give up B site, hold and trade"},
-          {name:"Aaron",       resp:"CAVE→B",    detail:"Fast cave rotate, flash into site for Jack"},
-          {name:"Oliver/Ryan", resp:"CT LONG",   detail:"Long CT rotate — come in late as cleanup/crossfire from opposite side of B"},
-        ]},
-      ],
-      T: [
-        { name:"Late B Hit", setup:"Pistol", notes:"Classic late B hit. Let Neo & Jack take cave first, Aaron's util blocks rotations.", players:[
-          {name:"Lucas",       resp:"3RD ENTRY", detail:"Buy smoke & molly, drop to Aaron in corner, take long when smoke fades"},
-          {name:"Neo",         resp:"1ST ENTRY", detail:"Wait behind B main; go after util clears default and take cave from site"},
-          {name:"Jack",        resp:"2ND ENTRY", detail:"Wait behind B main; go after util clears default and take cave from site"},
-          {name:"Aaron",       resp:"LAST MAN",  detail:"Buy smoke & flashes. Smoke short, long and molly gay, help long when on site"},
-          {name:"Oliver/Ryan", resp:"4TH ENTRY", detail:"Take long when smoke fades with Lucas"},
-        ]},
-        { name:"A Exec", setup:"Full Buy", notes:"Full A execute. Neo leads, Aaron's smokes cut CT & donut. Lucas drops smoke on way in.", players:[
-          {name:"Lucas",       resp:"SUPPORT",   detail:"Drop smoke by stairs for Aaron, molly Xbox on contact"},
-          {name:"Neo",         resp:"1ST ENTRY", detail:"Take space and route to site"},
-          {name:"Jack",        resp:"2ND ENTRY", detail:"Take space and route to site with Neo"},
-          {name:"Aaron",       resp:"UTIL",      detail:"Buy smoke, smoke donut and CT from stairs, aid with some late flashes"},
-          {name:"Oliver/Ryan", resp:"3RD ENTRY", detail:"3rd/4th in with Lucas, molly headshot/site, route to clear xbox/trade Neo or Jack"},
-        ]},
-        { name:"Fast B Split", setup:"Full Buy", notes:"Smoke red + heaven ideally. Cave contact triggers the push.", players:[
-          {name:"Lucas",       resp:"LANE",      detail:"3rd lane player, hold for initial heaven aggro from CTs to aid Neo and Jack, link up to push ramp"},
-          {name:"Neo",         resp:"CAVE",      detail:"Take cave; molly into it if needed, be thorough"},
-          {name:"Jack",        resp:"CAVE 2",    detail:"Take cave with Neo, play second man, help with possible heaven aggro while Neo focuses cave"},
-          {name:"Aaron",       resp:"UTIL",      detail:"Go in B main corner, smoke short, long and molly gay on cave contact, flash ramp in"},
-          {name:"Oliver/Ryan", resp:"RAMP",      detail:"B main holding for ramp, entry ramp with Lucas on cave contact, nade smoke if there is one on ramp"},
-        ]},
-        { name:"Slow B Split", setup:"Full Buy", notes:"Patient version of B split. Let the lane take breathe before committing ramp.", players:[
-          {name:"Lucas",       resp:"RAMP",      detail:"Initial support for lane take; once util on B is dropped, wait for Aaron and start progressing ramp"},
-          {name:"Neo",         resp:"LANE",      detail:"Sit behind B main doors with lane flash, take lane"},
-          {name:"Jack",        resp:"LURK",      detail:"Elbow player, start lurking out when we are taking lane"},
-          {name:"Aaron",       resp:"UTIL",      detail:"Flash for lane when called, smoke short and molly gay once cave is taken, link up with Lucas to progress ramp"},
-          {name:"Oliver/Ryan", resp:"LANE",      detail:"Take lane and cave with Neo, care heaven aggro"},
-        ]},
-        { name:"Fast A Split", setup:"Full Buy", notes:"Mid duo takes donut to split A. Aaron's util does heavy lifting cutting CT.", players:[
-          {name:"Lucas",       resp:"MID",       detail:"Wait elbow, go mid on flashes, take donut, drop smoke for Aaron to pick up on the way to A main"},
-          {name:"Neo",         resp:"MID",       detail:"Drop Aaron a flash on his throw spot, wait elbow, go mid on flashes, take donut"},
-          {name:"Jack",        resp:"A MAIN",    detail:"A main, contact when we contact donut"},
-          {name:"Aaron",       resp:"UTIL",      detail:"Smoke red, 3 flashes mid, smoke CT from A main"},
-          {name:"Oliver/Ryan", resp:"A MAIN",    detail:"A main, contact when we contact donut with Jack"},
-        ]},
-        { name:"B Default", setup:"Full Buy", notes:"Decide on a hit when we are at least phase 02.", players:[
-          {name:"Lucas",       resp:"B RAMP",    detail:"B main/lane, ramp hold"},
-          {name:"Neo",         resp:"B LANE",    detail:"B main/lane"},
-          {name:"Jack",        resp:"A MAIN",    detail:"A main"},
-          {name:"Aaron",       resp:"ELBOW",     detail:"Elbow"},
-          {name:"Oliver/Ryan", resp:"B RAMP",    detail:"B main/lane"},
-        ]},
-        { name:"Mid Default", setup:"Full Buy", notes:"THROW HEAVEN INSTA + RED INSTA. Use mid pressure to draw resources before committing.", players:[
-          {name:"Lucas",       resp:"B LANE",    detail:"B main/lane — take space lane, get into cubby at least"},
-          {name:"Neo",         resp:"MID ELBOW", detail:"Mid elbow — no need to go fast, throw some util mid, go for boost, wait out elbow smoke etc."},
-          {name:"Jack",        resp:"A MAIN",    detail:"A main, get into phase 02 ready to act on heavy focus mid"},
-          {name:"Aaron",       resp:"MID ELBOW", detail:"Mid elbow — no need to go fast, throw some util mid, go for boost, wait out elbow smoke etc."},
-          {name:"Oliver/Ryan", resp:"MID ELBOW", detail:"Mid elbow — no need to go fast, throw some util mid, go for boost, wait out elbow smoke etc."},
-        ]},
-        { name:"Mid Split", setup:"Full Buy", notes:"INSTA RED. Cave smoke removes mid vision.", players:[
-          {name:"Lucas",       resp:"LANE",      detail:"Lane, aim to contact mid, throw molly into jag to avoid getting spammed"},
-          {name:"Neo",         resp:"LANE",      detail:"Lane, aim to contact mid, throw molly into jag to avoid getting spammed"},
-          {name:"Jack",        resp:"ELBOW",     detail:"Elbow, contact mid with heaven"},
-          {name:"Aaron",       resp:"UTIL",      detail:"Smoke cave from spawn, flash us out mid"},
-          {name:"Oliver/Ryan", resp:"ELBOW",     detail:"Elbow, molly shelf, contact mid with heaven"},
-        ]},
-        { name:"Mid Popflash Bomba", setup:"Force Buy", notes:"Flash-heavy mid push on a force buy. Aaron coordinates util chain.", players:[
-          {name:"Lucas",       resp:"ELBOW",     detail:"Buy 2x flashes and drop for Aaron, wait elbow"},
-          {name:"Neo",         resp:"ELBOW",     detail:"Wait elbow"},
-          {name:"Jack",        resp:"ELBOW",     detail:"Buy 2x flashes and drop for Aaron, wait elbow"},
-          {name:"Aaron",       resp:"UTIL",      detail:"Buy 2x flashes, throw after initial util hit mid"},
-          {name:"Oliver/Ryan", resp:"ELBOW",     detail:"Wait elbow"},
-        ]},
-      ]
-    }
-  },
-
-  NUKE: {
-    complexity: 1,
-    positions: {
-      CT: { LTU:"Outside Rifle", Jaake:"A Anchor (worst spawn: Hut)", Ryan:"A Anchor (best spawn: Door)", Oliver:"Awper", Neo:"Ramp" },
-      T:  { "Player 1":"Outside", "Player 2":"Door", "Player 3":"Lobby", "Player 4":"Awper", "Player 5":"Lobby" }
-    },
-    strats: {
-      CT: [],
-      T: [
-        { name:"Oliver Special", setup:"Pistol", notes:"Outside aggro with squeaky link-up. Aaron drops Oliver's smoke, flashes through.", players:[
-          {name:"Lucas",       resp:"OUTSIDE",   detail:"Outside, contact, go through smokes to main on flash"},
-          {name:"Neo",         resp:"OUTSIDE",   detail:"Outside, contact, go through smokes to main on flash"},
-          {name:"Jack",        resp:"SQUEAKY",   detail:"Squeaky, contact on outside flash pop"},
-          {name:"Aaron",       resp:"UTIL",      detail:"Outside — drop Oliver smoke, flash through outside smokes. BUY SMOKE + 2 FLASHES"},
-          {name:"Oliver/Ryan", resp:"SMOKES",    detail:"Outside smokes, link up with squeaky"},
-        ]},
-      ]
-    }
-  },
-
-  MIRAGE: {
-    complexity: 1,
-    positions: {
-      CT: { Ryan:"Cat", Hibsen:"Awper", Neo:"Connector", Jaake:"B Anchor", LTU:"A Anchor" },
-      T:  { "Player 1":"Pack", "Player 2":"Awper", "Player 3":"Middle", "Player 4":"B Halls", "Player 5":"A Lurk" }
-    },
-    strats: { CT: [], T: [] }
-  },
-
-  INFERNO: {
-    complexity: 1,
-    positions: {
-      CT: { "Player 1":"B Support", "Player 2":"Awper", "Player 3":"Lane", "Player 4":"B Anchor", "Player 5":"Pit" },
-      T:  { "Player 1":"Banana", "Player 2":"Awper", "Player 3":"Alt Mid", "Player 4":"Banana Support", "Player 5":"Alt Mid Support" }
-    },
-    strats: { CT: [], T: [] }
-  },
-
-  OVERPASS: {
-    complexity: 1,
-    positions: {
-      CT: { "Player 1":"Monster", "Player 2":"Rotate", "Player 3":"Awper", "Player 4":"A Rifler", "Player 5":"Short" },
-      T:  { "Player 1":"Monster", "Player 2":"Pack", "Player 3":"Awper", "Player 4":"Playground", "Player 5":"Connector" }
-    },
-    strats: { CT: [], T: [] }
-  },
-
-  ANUBIS: {
-    complexity: 1,
-    positions: {
-      CT: { "Player 1":"Connector", "Player 2":"Middle", "Player 3":"Awper", "Player 4":"A Anchor", "Player 5":"B Anchor" },
-      T:  { "Player 1":"Canals", "Player 2":"Middle", "Player 3":"Awper", "Player 4":"A Lurk", "Player 5":"B Lurk" }
-    },
-    strats: { CT: [], T: [] }
-  },
-
-  TRAIN: {
-    complexity: 1,
-    positions: {
-      CT: { "Player 1":"Connector", "Player 2":"Middle", "Player 3":"Awper", "Player 4":"A Anchor", "Player 5":"B Anchor" },
-      T:  { "Player 1":"Canals", "Player 2":"Middle", "Player 3":"Awper", "Player 4":"A Lurk", "Player 5":"B Lurk" }
-    },
-    strats: { CT: [], T: [] }
-  },
-
-  "DUST II": {
-    complexity: 1,
-    positions: {
-      CT: { "Player 1":"Connector", "Player 2":"Middle", "Player 3":"Awper", "Player 4":"A Anchor", "Player 5":"B Anchor" },
-      T:  { "Player 1":"Canals", "Player 2":"Middle", "Player 3":"Awper", "Player 4":"A Lurk", "Player 5":"B Lurk" }
-    },
-    strats: { CT: [], T: [] }
-  },
-
-  VERTIGO: {
-    complexity: 1,
-    positions: {
-      CT: { "Player 1":"B Anchor", "Player 2":"Middle", "Player 3":"Ramp", "Player 4":"Ramp Support", "Player 5":"Awper" },
-      T:  { "Player 1":"B Stairs", "Player 2":"Middle", "Player 3":"A Ramp", "Player 4":"Pack", "Player 5":"Awper" }
-    },
-    strats: { CT: [], T: [] }
-  },
+// ═══════════════════════════════════════════
+// FALLBACK DATA
+// ═══════════════════════════════════════════
+const FALLBACK = {
+  ANCIENT:{complexity:2,positions:{CT:{Lucas:"Middle",Neo:"Middle",Jack:"B Anchor",Aaron:"Cave","Oliver/Ryan":"A Anchor"},T:{Lucas:"B Ramp",Neo:"Cave / Lane",Jack:"A Main",Aaron:"Mid","Oliver/Ryan":"Awper"}},strats:{CT:[
+    {name:"Bot Default",setup:"Pistol Round",notes:"Classic CT pistol — hold positions and play for info.",players:[{name:"Lucas",resp:"B LONG",detail:"B Long — hold and relay info"},{name:"Neo",resp:"DONUT",detail:"Donut hold"},{name:"Jack",resp:"DONUT",detail:"Donut hold"},{name:"Aaron",resp:"GAY",detail:"Gay position hold"},{name:"Oliver/Ryan",resp:"B LONG",detail:"Buy smoke + kit, hold B long"}]},
+    {name:"Default Hold",setup:"Standard",notes:"Hold until T movement is confirmed, then react.",players:[{name:"Lucas",resp:"MID",detail:"Passive donut position, watch for T mid aggro and relay info"},{name:"Neo",resp:"MID",detail:"Support Lucas, secondary donut angle, ready to rotate"},{name:"Jack",resp:"B ANCHOR",detail:"Passive B main hold, watch short, don't over-peek"},{name:"Aaron",resp:"CAVE",detail:"Passive cave position, deny T cave take, watch for mid cross"},{name:"Oliver/Ryan",resp:"A ANCHOR",detail:"Hold A main from temple. Don't peek early, play for info first"}]},
+    {name:"Mid Control",setup:"Full Buy",notes:"Win mid = info advantage and rotation dominance. Commit early.",players:[{name:"Lucas",resp:"MID AGGRO",detail:"Aggressive early donut contest — take mid before T mid arrives"},{name:"Neo",resp:"ELBOW",detail:"Take elbow aggressively with Lucas. Smoke off if over-extended"},{name:"Jack",resp:"B ANCHOR",detail:"B passive — hold short and B main, don't over-commit until mid is resolved"},{name:"Aaron",resp:"CAVE AGGRO",detail:"Aggressive cave peek — deny T cave take early, fall back once numbers are clear"},{name:"Oliver/Ryan",resp:"A ANCHOR",detail:"Passive hold, rotate aggressively through mid if Lucas/Neo win control"}]},
+    {name:"A Aggro Peek",setup:"Full Buy",notes:"Early A peek to catch T awper or A main players off-guard in setup phase.",players:[{name:"Lucas",resp:"MID",detail:"Mid donut aggressive peek — contest T mid early, relay info"},{name:"Neo",resp:"A ROTATE",detail:"Stay mid until Oliver/Ryan result known"},{name:"Jack",resp:"B ANCHOR",detail:"B passive hold — anchor B, don't rotate early"},{name:"Aaron",resp:"CAVE",detail:"Cave passive — watch for B-lane split, hold until called"},{name:"Oliver/Ryan",resp:"AGGRO PEEK",detail:"AGGRESSIVE early A main or temple peek — punish T passive setup"}]},
+    {name:"B Aggro Peek",setup:"Full Buy",notes:"Punish T B setups early. Jack and Aaron peek simultaneously.",players:[{name:"Lucas",resp:"MID",detail:"Mid hold — watch for mid cross after B aggro, relay info"},{name:"Neo",resp:"B ROTATE",detail:"Mid to B rotate ready — collapse B fast if Jack/Aaron win the peek"},{name:"Jack",resp:"AGGRO PEEK",detail:"AGGRESSIVE early B main peek — catch T B main players in setup. Flash yourself in"},{name:"Aaron",resp:"CAVE AGGRO",detail:"AGGRESSIVE early cave peek — contest lane take before T gets comfortable"},{name:"Oliver/Ryan",resp:"A ANCHOR",detail:"A passive hold — don't over-rotate until B result is clear"}]},
+    {name:"Retake A",setup:"Any",notes:"Mid players go donut, Jack goes CT long, Aaron temple flank. Crossfire on site.",players:[{name:"Lucas",resp:"MID ENTRY",detail:"Rotate through mid/donut to A — smoke on site if available"},{name:"Neo",resp:"MID ENTRY",detail:"Rotate through mid/donut with Lucas — second angle"},{name:"Jack",resp:"CT LONG",detail:"Slow rotate from B through CT corridor — come in last, crossfire"},{name:"Aaron",resp:"TEMPLE",detail:"Cave to temple rotate — flank from cave side, flash site"},{name:"Oliver/Ryan",resp:"CT FIGHT",detail:"Fight from CT/A position — don't give ground cheaply"}]},
+    {name:"Retake B",setup:"Any",notes:"Jack holds for trade, Aaron goes cave, mid players collapse. Coordinate flashes.",players:[{name:"Lucas",resp:"CAVE",detail:"Mid to cave route — support through cave into B, come from lane side"},{name:"Neo",resp:"MID PUSH",detail:"Rotate through cave or short to create crossfire"},{name:"Jack",resp:"B FIGHT",detail:"Fight from B anchor position — hold and trade"},{name:"Aaron",resp:"CAVE→B",detail:"Fast cave rotate, flash into site for Jack"},{name:"Oliver/Ryan",resp:"CT LONG",detail:"Long CT rotate — come in late as cleanup/crossfire"}]}
+  ],T:[
+    {name:"Late B Hit",setup:"Pistol Round",notes:"Classic late B hit. Let Neo & Jack take cave first, Aaron's util blocks rotations.",players:[{name:"Lucas",resp:"3RD ENTRY",detail:"Buy smoke & molly, drop to Aaron in corner, take long when smoke fades"},{name:"Neo",resp:"1ST ENTRY",detail:"Wait behind B main; go after util clears default and take cave from site"},{name:"Jack",resp:"2ND ENTRY",detail:"Wait behind B main; go after util clears default and take cave from site"},{name:"Aaron",resp:"LAST MAN",detail:"Buy smoke & flashes. Smoke short, long and molly gay, help long when on site"},{name:"Oliver/Ryan",resp:"4TH ENTRY",detail:"Take long when smoke fades with Lucas"}]},
+    {name:"A Exec",setup:"Full Buy",notes:"Full A execute. Neo leads, Aaron's smokes cut CT & donut. Lucas drops smoke on way in.",players:[{name:"Lucas",resp:"SUPPORT",detail:"Drop smoke by stairs for Aaron, molly Xbox on contact"},{name:"Neo",resp:"1ST ENTRY",detail:"Take space and route to site"},{name:"Jack",resp:"2ND ENTRY",detail:"Take space and route to site with Neo"},{name:"Aaron",resp:"UTIL",detail:"Buy smoke, smoke donut and CT from stairs, aid with late flashes"},{name:"Oliver/Ryan",resp:"3RD ENTRY",detail:"3rd/4th in with Lucas, molly headshot/site, route to clear xbox/trade Neo or Jack"}]},
+    {name:"Fast B Split",setup:"Full Buy",notes:"Smoke red + heaven ideally. Cave contact triggers the push.",players:[{name:"Lucas",resp:"LANE",detail:"3rd lane player, hold for heaven aggro from CTs, link up to push ramp"},{name:"Neo",resp:"CAVE",detail:"Take cave; molly into it if needed, be thorough"},{name:"Jack",resp:"CAVE 2",detail:"Take cave with Neo, play second man, help with possible heaven aggro"},{name:"Aaron",resp:"UTIL",detail:"B main corner — smoke short, long and molly gay on cave contact, flash ramp in"},{name:"Oliver/Ryan",resp:"RAMP",detail:"B main holding ramp, entry ramp with Lucas on cave contact"}]},
+    {name:"Slow B Split",setup:"Full Buy",notes:"Patient version of B split. Let the lane take breathe before committing ramp.",players:[{name:"Lucas",resp:"RAMP",detail:"Initial support for lane take; once util drops, wait for Aaron then progress ramp"},{name:"Neo",resp:"LANE",detail:"Sit behind B main doors with lane flash, take lane"},{name:"Jack",resp:"LURK",detail:"Elbow player, start lurking out when we are taking lane"},{name:"Aaron",resp:"UTIL",detail:"Flash for lane when called, smoke short and molly gay once cave is taken, link up with Lucas"},{name:"Oliver/Ryan",resp:"LANE",detail:"Take lane and cave with Neo, care heaven aggro"}]},
+    {name:"Fast A Split",setup:"Full Buy",notes:"Mid duo takes donut to split A. Aaron's util does heavy lifting cutting CT.",players:[{name:"Lucas",resp:"MID",detail:"Wait elbow, go mid on flashes, take donut, drop smoke for Aaron to pick up"},{name:"Neo",resp:"MID",detail:"Drop Aaron a flash on his throw spot, wait elbow, go mid on flashes, take donut"},{name:"Jack",resp:"A MAIN",detail:"A main, contact when we contact donut"},{name:"Aaron",resp:"UTIL",detail:"Smoke red, 3 flashes mid, smoke CT from A main"},{name:"Oliver/Ryan",resp:"A MAIN",detail:"A main, contact when we contact donut with Jack"}]},
+    {name:"B Default",setup:"Full Buy",notes:"Decide on a hit when we are at least phase 02.",players:[{name:"Lucas",resp:"B RAMP",detail:"B main/lane, ramp hold"},{name:"Neo",resp:"B LANE",detail:"B main/lane"},{name:"Jack",resp:"A MAIN",detail:"A main"},{name:"Aaron",resp:"ELBOW",detail:"Elbow"},{name:"Oliver/Ryan",resp:"B RAMP",detail:"B main/lane"}]},
+    {name:"Mid Default",setup:"Full Buy",notes:"THROW HEAVEN INSTA + RED INSTA. Use mid pressure to draw resources.",players:[{name:"Lucas",resp:"B LANE",detail:"B main/lane — take space lane, get into cubby at least"},{name:"Neo",resp:"MID ELBOW",detail:"Mid elbow — throw util mid, go for boost, wait out elbow smoke"},{name:"Jack",resp:"A MAIN",detail:"A main, get into phase 02 ready to act on heavy mid focus"},{name:"Aaron",resp:"MID ELBOW",detail:"Mid elbow — throw util mid, go for boost, wait out elbow smoke"},{name:"Oliver/Ryan",resp:"MID ELBOW",detail:"Mid elbow — throw util mid, go for boost, wait out elbow smoke"}]},
+    {name:"Mid Split",setup:"Full Buy",notes:"INSTA RED. Cave smoke removes mid vision.",players:[{name:"Lucas",resp:"LANE",detail:"Lane, aim to contact mid, throw molly into jag to avoid getting spammed"},{name:"Neo",resp:"LANE",detail:"Lane, aim to contact mid, throw molly into jag to avoid getting spammed"},{name:"Jack",resp:"ELBOW",detail:"Elbow, contact mid with heaven"},{name:"Aaron",resp:"UTIL",detail:"Smoke cave from spawn, flash us out mid"},{name:"Oliver/Ryan",resp:"ELBOW",detail:"Elbow, molly shelf, contact mid with heaven"}]},
+    {name:"Mid Popflash Bomba",setup:"Force Buy",notes:"Flash-heavy mid push on a force buy. Aaron coordinates util chain.",players:[{name:"Lucas",resp:"ELBOW",detail:"Buy 2x flashes and drop for Aaron, wait elbow"},{name:"Neo",resp:"ELBOW",detail:"Wait elbow"},{name:"Jack",resp:"ELBOW",detail:"Buy 2x flashes and drop for Aaron, wait elbow"},{name:"Aaron",resp:"UTIL",detail:"Buy 2x flashes, throw after initial util hit mid"},{name:"Oliver/Ryan",resp:"ELBOW",detail:"Wait elbow"}]}
+  ]}},
+  NUKE:{complexity:1,positions:{CT:{LTU:"Outside Rifle",Jaake:"A Anchor (worst: Hut)",Ryan:"A Anchor (best: Door)",Oliver:"Awper",Neo:"Ramp"},T:{"Player 1":"Outside","Player 2":"Door","Player 3":"Lobby","Player 4":"Awper","Player 5":"Lobby"}},strats:{CT:[],T:[{name:"Oliver Special",setup:"Pistol Round",notes:"Outside aggro with squeaky link-up. Aaron drops Oliver's smoke, flashes through.",players:[{name:"Lucas",resp:"OUTSIDE",detail:"Outside, contact, go through smokes to main on flash"},{name:"Neo",resp:"OUTSIDE",detail:"Outside, contact, go through smokes to main on flash"},{name:"Jack",resp:"SQUEAKY",detail:"Squeaky, contact on outside flash pop"},{name:"Aaron",resp:"UTIL",detail:"Outside — drop Oliver smoke, flash through outside smokes. BUY SMOKE + 2 FLASHES"},{name:"Oliver/Ryan",resp:"SMOKES",detail:"Outside smokes, link up with squeaky"}]}]}},
+  MIRAGE:{complexity:1,positions:{CT:{Ryan:"Cat",Hibsen:"Awper",Neo:"Connector",Jaake:"B Anchor",LTU:"A Anchor"},T:{"Player 1":"Pack","Player 2":"Awper","Player 3":"Middle","Player 4":"B Halls","Player 5":"A Lurk"}},strats:{CT:[],T:[]}},
+  INFERNO:{complexity:1,positions:{CT:{"Player 1":"B Support","Player 2":"Awper","Player 3":"Lane","Player 4":"B Anchor","Player 5":"Pit"},T:{"Player 1":"Banana","Player 2":"Awper","Player 3":"Alt Mid","Player 4":"Banana Support","Player 5":"Alt Mid Support"}},strats:{CT:[],T:[]}},
+  OVERPASS:{complexity:1,positions:{CT:{"Player 1":"Monster","Player 2":"Rotate","Player 3":"Awper","Player 4":"A Rifler","Player 5":"Short"},T:{"Player 1":"Monster","Player 2":"Pack","Player 3":"Awper","Player 4":"Playground","Player 5":"Connector"}},strats:{CT:[],T:[]}},
+  ANUBIS:{complexity:1,positions:{CT:{"Player 1":"Connector","Player 2":"Middle","Player 3":"Awper","Player 4":"A Anchor","Player 5":"B Anchor"},T:{"Player 1":"Canals","Player 2":"Middle","Player 3":"Awper","Player 4":"A Lurk","Player 5":"B Lurk"}},strats:{CT:[],T:[]}},
+  TRAIN:{complexity:1,positions:{CT:{"Player 1":"Connector","Player 2":"Middle","Player 3":"Awper","Player 4":"A Anchor","Player 5":"B Anchor"},T:{"Player 1":"Canals","Player 2":"Middle","Player 3":"Awper","Player 4":"A Lurk","Player 5":"B Lurk"}},strats:{CT:[],T:[]}},
+  "DUST II":{complexity:1,positions:{CT:{"Player 1":"Connector","Player 2":"Middle","Player 3":"Awper","Player 4":"A Anchor","Player 5":"B Anchor"},T:{"Player 1":"Canals","Player 2":"Middle","Player 3":"Awper","Player 4":"A Lurk","Player 5":"B Lurk"}},strats:{CT:[],T:[]}},
+  VERTIGO:{complexity:1,positions:{CT:{"Player 1":"B Anchor","Player 2":"Middle","Player 3":"Ramp","Player 4":"Ramp Support","Player 5":"Awper"},T:{"Player 1":"B Stairs","Player 2":"Middle","Player 3":"A Ramp","Player 4":"Pack","Player 5":"Awper"}},strats:{CT:[],T:[]}}
 };
 
 const MAP_ORDER = ["ANCIENT","NUKE","MIRAGE","INFERNO","OVERPASS","ANUBIS","TRAIN","DUST II","VERTIGO"];
+let MAPS = JSON.parse(JSON.stringify(FALLBACK));
 
-// ── State ────────────────────────────────────────────────────────────────────
-let currentMap    = "ANCIENT";
-let currentSide   = "T";
-let activePlayer  = null;
-let activeBuy     = null;
-let openCards     = {};  // key: `MAP-SIDE-idx`
-
-// Normalise a setup string to a buy bucket key
-function buyBucket(setup) {
-  const s = setup.toLowerCase();
-  if (s.includes('pistol'))           return 'pistol';
-  if (s.includes('full'))             return 'full';
-  if (s.includes('force'))            return 'force';
-  if (s.includes('eco'))              return 'eco';
-  return 'other'; // Standard, Any, -
+// ═══════════════════════════════════════════
+// CSV PARSER
+// ═══════════════════════════════════════════
+function parseCSV(text) {
+  const rows = []; let row=[], field='', inQ=false;
+  for (let i=0; i<text.length; i++) {
+    const c = text[i];
+    if (inQ) {
+      if (c==='"') { if (text[i+1]==='"'){field+='"';i++;}else inQ=false; }
+      else field+=c;
+    } else {
+      if      (c==='"')  { inQ=true; }
+      else if (c===',')  { row.push(field.trim()); field=''; }
+      else if (c==='\n') { row.push(field.trim()); if(row.some(Boolean))rows.push(row); row=[]; field=''; }
+      else if (c!=='\r') { field+=c; }
+    }
+  }
+  if (field||row.length){ row.push(field.trim()); if(row.some(Boolean))rows.push(row); }
+  return rows;
 }
 
-const BUY_LABELS = {
-  pistol: 'Pistol',
-  full:   'Full Buy',
-  force:  'Force',
-  eco:    'Eco',
-  other:  'Standard / Any',
-};
-
-// ── Helpers ──────────────────────────────────────────────────────────────────
-function totalStrats(mapKey) {
-  const m = MAPS[mapKey];
-  return m.strats.T.length + m.strats.CT.length;
+// "3RD ENTRY, Buy smoke..." → {resp:'3RD ENTRY', detail:'Buy smoke...'}
+// "B main/lane hold"       → {resp:'',           detail:'B main/lane hold'}
+function parseResp(text) {
+  if (!text) return {resp:'', detail:''};
+  const m = text.match(/^([A-Z0-9 \/#&]+),\s*(.+)$/s);
+  if (m) return {resp: m[1].trim(), detail: m[2].trim()};
+  return {resp:'', detail: text.trim()};
 }
 
-function setupClass(setup) {
-  const s = setup.toLowerCase();
-  if (s.includes('pistol')) return 'pistol';
-  if (s.includes('full'))   return 'full';
-  if (s.includes('eco') || s.includes('force')) return 'eco';
+function parseSheetData(rows) {
+  const result = { complexity:1, positions:{CT:{},T:{}}, strats:{CT:[],T:[]} };
+
+  // Positions: col[9]=name, col[11]=position. Skip numeric/placeholder rows.
+  const SKIP = new Set(['1','2','3','1.0','2.0','3.0']);
+  let posRows = [];
+  for (const row of rows) {
+    const name=(row[9]||'').trim(), pos=(row[11]||'').trim();
+    if (name && pos && !SKIP.has(name) && !/^\d+(\.\d+)?$/.test(name)
+        && !name.toLowerCase().includes('name here'))
+      posRows.push([name,pos]);
+  }
+  posRows.slice(0,5).forEach(([n,p])=>result.positions.CT[n]=p);
+  posRows.slice(5,10).forEach(([n,p])=>result.positions.T[n]=p);
+
+  // Complexity: look for lone "What level" answer in col[0]
+  let nextIsLevel=false;
+  for (const row of rows) {
+    if (nextIsLevel) {
+      const v=parseFloat(row[0]);
+      if ([1,2,3].includes(v)) result.complexity=v;
+      nextIsLevel=false;
+    }
+    if ((row[0]||'').toLowerCase().includes('what level')) nextIsLevel=true;
+  }
+
+  // Strats: col[0]=tactic, col[1]=side, col[2]=setup, col[3]=player, col[4]=resp, col[14]=notes
+  let tactic=null,side=null,setup=null,notes=null,players=[];
+  function flush() {
+    if (tactic && players.length && (side==='T'||side==='CT'))
+      result.strats[side].push({name:tactic,setup:setup||'Standard',notes:notes||'',players:[...players]});
+    tactic=null;side=null;setup=null;notes=null;players=[];
+  }
+  for (const row of rows) {
+    const c0=(row[0]||'').trim(), c1=(row[1]||'').trim(), c2=(row[2]||'').trim(),
+          c3=(row[3]||'').trim(), c4=(row[4]||'').trim(), c14=(row[14]||'').trim();
+    if (c0==='TACTIC'||c0==='COUNTER-TERRORIST'||c0==='TERRORIST'){flush();continue;}
+    if (c1==='-'&&c2==='-') continue;
+    if (c0&&(c1==='T'||c1==='CT')&&c3) {
+      flush();
+      tactic=c0; side=c1; setup=c2||'Standard'; notes=c14;
+      const {resp,detail}=parseResp(c4);
+      players=[{name:c3,resp,detail:detail||c4}];
+    } else if (!c0&&c3&&tactic) {
+      const {resp,detail}=parseResp(c4);
+      players.push({name:c3,resp,detail:detail||c4});
+    }
+  }
+  flush();
+  return result;
+}
+
+// ═══════════════════════════════════════════
+// GOOGLE SHEETS FETCH
+// ═══════════════════════════════════════════
+function sheetURL(id,name) {
+  return `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(name)}`;
+}
+function setStatus(msg,type) {
+  const el=document.getElementById('syncStatus');
+  el.className=`sync-status ${type}`;
+  el.innerHTML=`<div class="sync-dot${type==='loading'?' pulse':''}"></div>${msg}`;
+}
+async function connectSheet() {
+  let id=(document.getElementById('sheetIdInput').value||'').trim();
+  const m=id.match(/\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
+  if(m) id=m[1];
+  if(!id) return;
+  window.location.hash=id;
+  document.getElementById('syncBtn').disabled=true;
+  setStatus('Connecting…','loading');
+  const newMaps=JSON.parse(JSON.stringify(FALLBACK));
+  const errors=[];
+  await Promise.all(MAP_ORDER.map(async mapKey=>{
+    try {
+      const res=await fetch(sheetURL(id,mapKey));
+      if(!res.ok) throw new Error(`HTTP ${res.status}`);
+      const text=await res.text();
+      if(text.includes('<html')||text.includes('google-visualization-errors'))
+        throw new Error('Sheet not published or tab not found');
+      newMaps[mapKey]=parseSheetData(parseCSV(text));
+    } catch(e) { errors.push(`${mapKey}: ${e.message}`); }
+  }));
+  MAPS=newMaps;
+  currentMap='ANCIENT'; currentSide='T';
+  render();
+  document.getElementById('syncBtn').disabled=false;
+  if (errors.length===0) {
+    setStatus('Live — synced from Google Sheets','ok');
+  } else if (errors.length<MAP_ORDER.length) {
+    setStatus(`Partial sync (${MAP_ORDER.length-errors.length}/${MAP_ORDER.length} maps loaded)`,'ok');
+  } else {
+    setStatus('Failed — check Sheet ID and publish settings','err');
+    window.location.hash='';
+  }
+}
+
+// ═══════════════════════════════════════════
+// STATE + HELPERS
+// ═══════════════════════════════════════════
+let currentMap='ANCIENT', currentSide='T', activePlayer=null, activeBuy=null, openCards={};
+
+function buyBucket(s){
+  s=(s||'').toLowerCase();
+  if(s.includes('pistol')) return 'pistol';
+  if(s.includes('full'))   return 'full';
+  if(s.includes('force'))  return 'force';
+  if(s.includes('eco'))    return 'eco';
+  return 'other';
+}
+const BUY_LABELS={pistol:'Pistol',full:'Full Buy',force:'Force',eco:'Eco',other:'Standard / Any'};
+function setupClass(s){
+  s=(s||'').toLowerCase();
+  if(s.includes('pistol')) return 'pistol';
+  if(s.includes('full'))   return 'full';
+  if(s.includes('eco')||s.includes('force')) return 'eco';
   return '';
 }
 
-// ── Build map tabs ────────────────────────────────────────────────────────────
-function buildMapTabs() {
-  const bar = document.getElementById("mapTabsBar");
-  bar.innerHTML = "";
-  MAP_ORDER.forEach(mapKey => {
-    const count = totalStrats(mapKey);
-    const btn = document.createElement("button");
-    btn.className = "map-tab" + (mapKey === currentMap ? " active" : "");
-    btn.innerHTML = `${mapKey} <span class="strat-count ${count === 0 ? 'zero' : ''}">${count}</span>`;
-    btn.onclick = () => { currentMap = mapKey; activePlayer = null; render(); };
+// ═══════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════
+function totalStrats(k){ const m=MAPS[k]; return (m?.strats?.T?.length||0)+(m?.strats?.CT?.length||0); }
+
+function buildMapTabs(){
+  const bar=document.getElementById('mapTabsBar'); bar.innerHTML='';
+  MAP_ORDER.forEach(k=>{
+    const n=totalStrats(k), btn=document.createElement('button');
+    btn.className='map-tab'+(k===currentMap?' active':'');
+    btn.innerHTML=`${k} <span class="strat-count ${n===0?'zero':''}">${n}</span>`;
+    btn.onclick=()=>{currentMap=k;activePlayer=null;activeBuy=null;render();};
     bar.appendChild(btn);
   });
 }
-
-// ── Build positions bar ───────────────────────────────────────────────────────
-function buildPositions() {
-  const bar = document.getElementById("positionsBar");
-  const mapData = MAPS[currentMap];
-  const pos = mapData.positions[currentSide];
-  bar.innerHTML = "";
-  Object.entries(pos).forEach(([player, position]) => {
-    const chip = document.createElement("div");
-    chip.className = `pos-chip ${currentSide.toLowerCase()}-pos`;
-    chip.innerHTML = `<span class="pname">${player}</span><span class="ppos">→ ${position}</span>`;
-    bar.appendChild(chip);
+function buildPositions(){
+  const bar=document.getElementById('positionsBar'), pos=MAPS[currentMap]?.positions?.[currentSide]||{};
+  bar.innerHTML='';
+  Object.entries(pos).forEach(([p,v])=>{
+    if(!p||!v) return;
+    const c=document.createElement('div');
+    c.className=`pos-chip ${currentSide.toLowerCase()}-pos`;
+    c.innerHTML=`<span class="pname">${p}</span><span class="ppos">→ ${v}</span>`;
+    bar.appendChild(c);
   });
 }
-
-// ── Build complexity ──────────────────────────────────────────────────────────
-function buildComplexity() {
-  const lvl = MAPS[currentMap].complexity;
-  document.querySelectorAll('.pip').forEach((p, i) => p.classList.toggle('on', i < lvl));
+function buildComplexity(){
+  const lvl=MAPS[currentMap]?.complexity||1;
+  document.querySelectorAll('.pip').forEach((p,i)=>p.classList.toggle('on',i<lvl));
 }
-
-// ── Build player filters ──────────────────────────────────────────────────────
-function buildFilters() {
-  const container = document.getElementById("playerFilters");
-  const pos = MAPS[currentMap].positions[currentSide];
-  const players = Object.keys(pos);
-  container.innerHTML = "";
-  players.forEach(p => {
-    const btn = document.createElement("button");
-    btn.className = "player-btn" + (activePlayer === p ? " active" : "");
-    btn.textContent = p;
-    btn.onclick = () => { activePlayer = activePlayer === p ? null : p; buildFilters(); filterStrats(); };
-    container.appendChild(btn);
+function buildFilters(){
+  const cont=document.getElementById('playerFilters'), pos=MAPS[currentMap]?.positions?.[currentSide]||{};
+  cont.innerHTML='';
+  Object.keys(pos).forEach(p=>{
+    if(!p) return;
+    const btn=document.createElement('button');
+    btn.className='player-btn'+(activePlayer===p?' active':'');
+    btn.textContent=p;
+    btn.onclick=()=>{activePlayer=activePlayer===p?null:p;buildFilters();filterStrats();};
+    cont.appendChild(btn);
   });
 }
-
-// ── Build buy filters ─────────────────────────────────────────────────────────
-function buildBuyFilters() {
-  const container = document.getElementById("buyFilters");
-  const strats = MAPS[currentMap].strats[currentSide];
-  // Collect which buckets actually exist for this map+side
-  const present = [...new Set(strats.map(s => buyBucket(s.setup)))];
-  container.innerHTML = "";
-  present.forEach(bucket => {
-    const btn = document.createElement("button");
-    const isActive = activeBuy === bucket;
-    btn.className = "buy-btn" + (isActive ? ` active-${bucket}` : "");
-    btn.textContent = BUY_LABELS[bucket];
-    btn.onclick = () => { activeBuy = activeBuy === bucket ? null : bucket; buildBuyFilters(); filterStrats(); };
-    container.appendChild(btn);
+function buildBuyFilters(){
+  const cont=document.getElementById('buyFilters'), strats=MAPS[currentMap]?.strats?.[currentSide]||[];
+  const present=[...new Set(strats.map(s=>buyBucket(s.setup)))];
+  cont.innerHTML='';
+  present.forEach(b=>{
+    const btn=document.createElement('button');
+    btn.className='buy-btn'+(activeBuy===b?` active-${b}`:'');
+    btn.textContent=BUY_LABELS[b];
+    btn.onclick=()=>{activeBuy=activeBuy===b?null:b;buildBuyFilters();filterStrats();};
+    cont.appendChild(btn);
   });
 }
-
-
-function buildCards() {
-  const list = document.getElementById("stratList");
-  const emptyEl = document.getElementById("emptyState");
-  const comingSoon = document.getElementById("comingSoon");
-
-  // Clear everything except persistent els
-  list.querySelectorAll(".strat-card").forEach(c => c.remove());
-  emptyEl.style.display = "none";
-  comingSoon.classList.remove("show");
-
-  const strats = MAPS[currentMap].strats[currentSide];
-  const sideClass = currentSide === "T" ? "t-card" : "ct-card";
-  const isT = currentSide === "T";
-
-  if (strats.length === 0) {
-    comingSoon.classList.add("show");
-    return;
-  }
-
-  strats.forEach((strat, idx) => {
-    const key = `${currentMap}-${currentSide}-${idx}`;
-    const card = document.createElement("div");
-    card.className = `strat-card ${sideClass}`;
-    card.dataset.idx     = idx;
-    card.dataset.players = strat.players.map(p => p.name.toLowerCase()).join(",");
-    card.dataset.name    = strat.name.toLowerCase();
-    card.dataset.notes   = (strat.notes || "").toLowerCase();
-    card.dataset.setup   = buyBucket(strat.setup);
-    if (openCards[key]) card.classList.add("open");
-
-    const sc = setupClass(strat.setup);
-    const rowsHtml = strat.players.map(pl => `
-      <div class="player-row">
+function buildCards(){
+  const list=document.getElementById('stratList');
+  list.querySelectorAll('.strat-card').forEach(c=>c.remove());
+  document.getElementById('emptyState').style.display='none';
+  const cs=document.getElementById('comingSoon');
+  cs.classList.remove('show');
+  const strats=MAPS[currentMap]?.strats?.[currentSide]||[];
+  if(!strats.length){cs.classList.add('show');return;}
+  const sc=currentSide==='T'?'t-card':'ct-card', isT=currentSide==='T';
+  strats.forEach((s,idx)=>{
+    const key=`${currentMap}-${currentSide}-${idx}`, card=document.createElement('div');
+    card.className=`strat-card ${sc}`;
+    card.dataset.idx=idx;
+    card.dataset.players=s.players.map(p=>p.name.toLowerCase()).join(',');
+    card.dataset.name=s.name.toLowerCase();
+    card.dataset.notes=(s.notes||'').toLowerCase();
+    card.dataset.setup=buyBucket(s.setup);
+    if(openCards[key]) card.classList.add('open');
+    const rows=s.players.map(pl=>{
+      const hasTag=pl.resp&&pl.resp.trim();
+      return `<div class="player-row">
         <div class="player-name">${pl.name}</div>
         <div class="player-resp">
-          <span class="resp-tag ${isT ? 't-tag' : ''}">${pl.resp}</span>
-          ${pl.detail}
-        </div>
-      </div>`).join("");
-
-    card.innerHTML = `
+          ${hasTag?`<span class="resp-tag ${isT?'t-tag':''}">${pl.resp}</span>`:''}
+          ${pl.detail||pl.resp}
+        </div></div>`;
+    }).join('');
+    card.innerHTML=`
       <div class="card-header" onclick="toggleCard(this.parentElement)">
-        <div class="card-name">${strat.name}</div>
-        <div class="card-setup ${sc}">${strat.setup}</div>
+        <div class="card-name">${s.name}</div>
+        <div class="card-setup ${setupClass(s.setup)}">${s.setup}</div>
         <div class="chevron">▾</div>
       </div>
-      <div class="card-notes">${strat.notes || ''}</div>
-      <div class="player-table">${rowsHtml}</div>`;
-
+      ${s.notes?`<div class="card-notes">${s.notes}</div>`:''}
+      <div class="player-table">${rows}</div>`;
     list.appendChild(card);
   });
 }
-
-function toggleCard(card) {
-  const idx = parseInt(card.dataset.idx);
-  const key = `${currentMap}-${currentSide}-${idx}`;
-  if (card.classList.contains("open")) { card.classList.remove("open"); delete openCards[key]; }
-  else { card.classList.add("open"); openCards[key] = true; }
+function toggleCard(card){
+  const key=`${currentMap}-${currentSide}-${card.dataset.idx}`;
+  if(card.classList.contains('open')){card.classList.remove('open');delete openCards[key];}
+  else{card.classList.add('open');openCards[key]=true;}
 }
-
-// ── Filter ────────────────────────────────────────────────────────────────────
-function filterStrats() {
-  const query = document.getElementById("searchBox").value.toLowerCase();
-  let visible = 0;
-  document.querySelectorAll(".strat-card").forEach(card => {
-    const nameMatch   = card.dataset.name.includes(query);
-    const noteMatch   = card.dataset.notes.includes(query);
-    const playerMatch = activePlayer ? card.dataset.players.includes(activePlayer.toLowerCase()) : true;
-    const buyMatch    = activeBuy    ? card.dataset.setup === activeBuy : true;
-    const queryMatch  = !query || nameMatch || noteMatch || card.dataset.players.includes(query);
-    const show = playerMatch && buyMatch && queryMatch;
-    card.classList.toggle("hidden", !show);
-    if (show) visible++;
-
-    card.querySelectorAll(".player-row").forEach(row => {
-      const pname = row.querySelector(".player-name")?.textContent.trim();
-      row.classList.toggle("highlight", !!activePlayer && pname === activePlayer);
+function filterStrats(){
+  const q=document.getElementById('searchBox').value.toLowerCase(); let v=0;
+  document.querySelectorAll('.strat-card').forEach(c=>{
+    const pm=activePlayer?c.dataset.players.includes(activePlayer.toLowerCase()):true;
+    const bm=activeBuy?c.dataset.setup===activeBuy:true;
+    const qm=!q||c.dataset.name.includes(q)||c.dataset.notes.includes(q)||c.dataset.players.includes(q);
+    const show=pm&&bm&&qm;
+    c.classList.toggle('hidden',!show);
+    if(show)v++;
+    c.querySelectorAll('.player-row').forEach(r=>{
+      const pn=r.querySelector('.player-name')?.textContent.trim();
+      r.classList.toggle('highlight',!!activePlayer&&pn===activePlayer);
     });
   });
-  const emptyEl = document.getElementById("emptyState");
-  emptyEl.style.display = (visible === 0 && !document.getElementById("comingSoon").classList.contains("show")) ? "block" : "none";
+  document.getElementById('emptyState').style.display=
+    (v===0&&!document.getElementById('comingSoon').classList.contains('show'))?'block':'none';
+}
+function setSide(side){
+  currentSide=side;activePlayer=null;activeBuy=null;
+  document.getElementById('btnT').className='tab-btn'+(side==='T'?' active-t':'');
+  document.getElementById('btnCT').className='tab-btn'+(side==='CT'?' active-ct':'');
+  buildPositions();buildFilters();buildBuyFilters();buildCards();filterStrats();
+}
+function render(){
+  document.getElementById('searchBox').value='';
+  buildMapTabs();buildComplexity();buildPositions();
+  buildFilters();buildBuyFilters();buildCards();filterStrats();
+  document.getElementById('btnT').className='tab-btn'+(currentSide==='T'?' active-t':'');
+  document.getElementById('btnCT').className='tab-btn'+(currentSide==='CT'?' active-ct':'');
 }
 
-// ── Side switch ───────────────────────────────────────────────────────────────
-function setSide(side) {
-  currentSide = side;
-  activePlayer = null;
-  activeBuy = null;
-  document.getElementById("btnT").className  = "tab-btn" + (side === "T"  ? " active-t"  : "");
-  document.getElementById("btnCT").className = "tab-btn" + (side === "CT" ? " active-ct" : "");
-  buildPositions();
-  buildFilters();
-  buildBuyFilters();
-  buildCards();
-  filterStrats();
-}
-
-// ── Full render ───────────────────────────────────────────────────────────────
-function render() {
-  document.getElementById("searchBox").value = "";
-  activePlayer = null;
-  activeBuy = null;
-  buildMapTabs();
-  buildComplexity();
-  buildPositions();
-  buildFilters();
-  buildBuyFilters();
-  buildCards();
-  filterStrats();
-  document.getElementById("btnT").className  = "tab-btn" + (currentSide === "T"  ? " active-t"  : "");
-  document.getElementById("btnCT").className = "tab-btn" + (currentSide === "CT" ? " active-ct" : "");
-}
-
-// ── Init ──────────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
 render();
+const savedId=(window.location.hash||'').replace('#','').trim();
+if(savedId){
+  document.getElementById('sheetIdInput').value=savedId;
+  connectSheet();
+}
 </script>
 </body>
 </html>
