@@ -211,7 +211,7 @@ const FALLBACK = {
   VERTIGO:{complexity:1,positions:{CT:{"Player 1":"B Anchor","Player 2":"Middle","Player 3":"Ramp","Player 4":"Ramp Support","Player 5":"Awper"},T:{"Player 1":"B Stairs","Player 2":"Middle","Player 3":"A Ramp","Player 4":"Pack","Player 5":"Awper"}},strats:{CT:[],T:[]}}
 };
 
-const MAP_ORDER = ["ANCIENT","NUKE","MIRAGE","INFERNO","OVERPASS","ANUBIS","TRAIN","DUST II","VERTIGO"];
+const MAP_ORDER = ["ANCIENT","NUKE","MIRAGE","INFERNO","OVERPASS","ANUBIS","TRAIN","DUST II"];
 let MAPS = JSON.parse(JSON.stringify(FALLBACK));
 
 // ═══════════════════════════════════════════
@@ -301,35 +301,21 @@ function parseSheetData(rows) {
 // ═══════════════════════════════════════════
 const SHEET_ID = '1g1QRAYNBtLECvyrpfsFvW3PGpLnjfnsuwnga6IIEJcw';
 
+const TAB_GIDS = {
+  'ANCIENT':  '1528962395',
+  'NUKE':     '1945370285',
+  'MIRAGE':   '1809042707',
+  'INFERNO':  '1740690180',
+  'OVERPASS': '267790782',
+  'ANUBIS':   '386735560',
+  'TRAIN':    '566240368',
+  'DUST II':  '529120844',
+};
+
 function setStatus(msg,type) {
   const el=document.getElementById('syncStatus');
   el.className=`sync-status ${type}`;
   el.innerHTML=`<div class="sync-dot${type==='loading'?' pulse':''}"></div>${msg}`;
-}
-
-// Fetch the public spreadsheet HTML and extract tab name → gid mappings
-async function getTabGids() {
-  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/pubhtml`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const html = await res.text();
-  const tabs = {};
-  // pubhtml contains <li id="sheet-button-GID" ...>NAME</li>
-  const re = /<li\s+id="sheet-button-(\d+)"[^>]*>\s*<a[^>]*>([^<]+)<\/a>/gi;
-  let m;
-  while ((m = re.exec(html)) !== null) {
-    tabs[m[2].trim().toUpperCase()] = m[1];
-  }
-  // fallback: look for ol.switcherContainer links
-  if (!Object.keys(tabs).length) {
-    const re2 = /href="#gid=(\d+)"[^>]*>([^<]+)</gi;
-    while ((m = re2.exec(html)) !== null) {
-      tabs[m[2].trim().toUpperCase()] = m[1];
-    }
-  }
-  console.log('Tabs found:', tabs);
-  if (!Object.keys(tabs).length) throw new Error('Could not parse tab gids from pubhtml');
-  return tabs;
 }
 
 async function loadSheet() {
@@ -337,29 +323,16 @@ async function loadSheet() {
   const newMaps = JSON.parse(JSON.stringify(FALLBACK));
   const errors  = [];
 
-  let tabGids;
-  try {
-    tabGids = await getTabGids();
-    console.log('Tab gids found:', tabGids);
-  } catch(e) {
-    setStatus(`Failed to read sheet tabs — check publish settings (${e.message})`,'err');
-    return;
-  }
-
   await Promise.all(MAP_ORDER.map(async mapKey => {
-    const gid = tabGids[mapKey];
-    if (!gid) {
-      errors.push(`${mapKey}: tab not found in sheet`);
-      return;
-    }
+    const gid = TAB_GIDS[mapKey];
+    if (!gid) return; // no gid = skip (e.g. Vertigo)
     try {
       const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${gid}`;
-      console.log(`Fetching ${mapKey} (gid=${gid})`);
       const res  = await fetch(url);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const text = await res.text();
       if (text.includes('<html') || text.includes('<!DOCTYPE'))
-        throw new Error('Got HTML instead of CSV');
+        throw new Error('Got HTML instead of CSV — check publish settings');
       newMaps[mapKey] = parseSheetData(parseCSV(text));
     } catch(e) {
       console.error(`${mapKey} failed:`, e);
@@ -373,8 +346,8 @@ async function loadSheet() {
 
   if (errors.length === 0) {
     setStatus('Live — synced from Google Sheets','ok');
-  } else if (errors.length < MAP_ORDER.length) {
-    setStatus(`Partial sync (${MAP_ORDER.length - errors.length}/${MAP_ORDER.length} maps loaded)`,'ok');
+  } else if (errors.length < Object.keys(TAB_GIDS).length) {
+    setStatus(`Partial sync (${Object.keys(TAB_GIDS).length - errors.length}/${Object.keys(TAB_GIDS).length} maps loaded)`,'ok');
   } else {
     setStatus('Failed to load — check sheet publish settings','err');
   }
