@@ -302,7 +302,7 @@ function parseSheetData(rows) {
 const SHEET_ID = '1g1QRAYNBtLECvyrpfsFvW3PGpLnjfnsuwnga6IIEJcw';
 
 function sheetURL(name) {
-  return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(name)}`;
+  return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&sheet=${encodeURIComponent(name)}`;
 }
 function setStatus(msg,type) {
   const el=document.getElementById('syncStatus');
@@ -315,13 +315,20 @@ async function loadSheet() {
   const errors=[];
   await Promise.all(MAP_ORDER.map(async mapKey=>{
     try {
-      const res=await fetch(sheetURL(mapKey));
+      const url = sheetURL(mapKey);
+      console.log(`Fetching ${mapKey}:`, url);
+      const res=await fetch(url);
+      console.log(`${mapKey} response:`, res.status, res.headers.get('content-type'));
       if(!res.ok) throw new Error(`HTTP ${res.status}`);
       const text=await res.text();
-      if(text.includes('<html')||text.includes('google-visualization-errors'))
-        throw new Error('Sheet not published or tab not found');
+      console.log(`${mapKey} first 200 chars:`, text.slice(0,200));
+      if(text.includes('<html')||text.includes('google-visualization-errors')||text.includes('<!DOCTYPE'))
+        throw new Error('Got HTML instead of CSV — sheet may not be published');
       newMaps[mapKey]=parseSheetData(parseCSV(text));
-    } catch(e) { errors.push(`${mapKey}: ${e.message}`); }
+    } catch(e) {
+      console.error(`${mapKey} failed:`, e);
+      errors.push(`${mapKey}: ${e.message}`);
+    }
   }));
   MAPS=newMaps;
   currentMap='ANCIENT'; currentSide='T';
@@ -331,7 +338,7 @@ async function loadSheet() {
   } else if (errors.length<MAP_ORDER.length) {
     setStatus(`Partial sync (${MAP_ORDER.length-errors.length}/${MAP_ORDER.length} maps loaded)`,'ok');
   } else {
-    setStatus('Failed to load — check sheet publish settings','err');
+    setStatus(`Failed — open browser console (F12) for details`,'err');
   }
 }
 
